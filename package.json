@@ -24,7 +24,9 @@
     "typegoose": "^5.2.1",
     "bcryptjs": "latest",
     "passport": "latest",
-    "passport-jwt": "latest"
+    "passport-jwt": "latest",
+    "moment": "latest",
+    "jwt-simple": "latest"
   },
   "devDependencies": {
     "@types/bcrypt": "^2.0.0",

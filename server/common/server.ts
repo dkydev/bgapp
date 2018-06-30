@@ -1,5 +1,4 @@
 import * as express from 'express';
-import {Application} from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as http from 'http';
@@ -7,30 +6,30 @@ import * as os from 'os';
 import * as cookieParser from 'cookie-parser';
 import swaggerify from './swagger';
 import log from './logger';
-import * as mongoose from 'mongoose';
-
-import * as passport from 'passport';
-import {PassportConfig} from './config/passport';
+import "./db";
+import auth from './auth';
+import * as expressValidator from 'express-validator';
 
 export default class App {
 
-    private app: express.Application;
+    private readonly app: express.Application;
 
     constructor() {
         const root = path.normalize(__dirname + '/../..');
 
         this.app = express();
-        this.app.set('appPath', root + 'client');
+        //this.app.set('appPath', root + 'client');
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({extended: true}));
-        this.app.use(cookieParser(process.env.SESSION_SECRET));
+
+        this.app.use(expressValidator());
+        //this.app.use(cookieParser(process.env.SESSION_SECRET));
+
+        // Serve /public directory.
         this.app.use(express.static(`${root}/public`));
 
-        mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
-        mongoose.connection.on('error', () => {
-            console.log('MongoDB connection error. Please make sure MongoDB is running.');
-            process.exit();
-        });
+        // Init authentication strategy.
+        this.app.use(auth.initialize());
 
     }
 
@@ -40,7 +39,8 @@ export default class App {
     }
 
     public listen(port: number = parseInt(process.env.PORT)): express.Application {
-        const welcome = port => () => log.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname() } on port: ${port}}`);
+        const welcome = port => () =>
+            log.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname() } on port: ${port}}`);
         http.createServer(this.app).listen(port, welcome(port));
         return this.app;
     }

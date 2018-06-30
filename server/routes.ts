@@ -1,6 +1,16 @@
 import { Application } from 'express';
-import userRouter from './api/controllers/user/router'
+import {router as userRouter} from './api/user/router';
+import auth from "./common/auth";
 
 export default function routes(app: Application): void {
-  app.use('/api/user', userRouter);
+    userRouter(app);
+
+
+
+    app.all(process.env.API_BASE + "*", (req, res, next) => {
+        if (req.path.includes(process.env.API_BASE + "login")) return next();
+
+
+    });
+
 };
