@@ -1,4 +1,4 @@
-import { request, login } from "../server/common";
+import { request, login } from "./common";
 import { cleanCollection } from "../server/api/user/model";
 
 describe("# Auth", () => {

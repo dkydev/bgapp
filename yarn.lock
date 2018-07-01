@@ -73,15 +73,9 @@
   version "2.2.48"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-2.2.48.tgz#3523b126a0b049482e1c3c11877460f76622ffab"
 
-"@types/moment@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@types/moment/-/moment-2.13.0.tgz#604ebd189bc3bc34a1548689404e61a2a4aac896"
-  dependencies:
-    moment "*"
-
 "@types/mongodb@*", "@types/mongodb@^3.0.23":
-  version "3.0.23"
-  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.0.23.tgz#22885a5b6693d4957767d9124dd18bf9c269bce8"
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.1.0.tgz#a504b7339e73033b75f7220e116e4459b6ce9c64"
   dependencies:
     "@types/bson" "*"
     "@types/events" "*"
@@ -161,8 +155,8 @@ ajv-keywords@^3.1.0:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-3.2.0.tgz#e86b819c602cf8821ad637413698f1dec021847a"
 
 ajv@^6.1.0:
-  version "6.5.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.1.tgz#88ebc1263c7133937d108b80c5572e64e1d9322d"
+  version "6.5.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.5.2.tgz#678495f9b82f7cca6be248dd92f59bff5e1f4360"
   dependencies:
     fast-deep-equal "^2.0.1"
     fast-json-stable-stringify "^2.0.0"
@@ -1445,7 +1439,7 @@ debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@3.1.0, debug@^3.1.0:
+debug@3.1.0, debug@^3.0.0, debug@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   dependencies:
@@ -1550,6 +1544,18 @@ dir-glob@^2.0.0:
   dependencies:
     arrify "^1.0.1"
     path-type "^3.0.0"
+
+doctrine-file@^1.0.2:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/doctrine-file/-/doctrine-file-1.0.3.tgz#10b2925f7a8cacfd8bc2a1fda787f015912101ce"
+  dependencies:
+    doctrine "^2.0.0"
+
+doctrine@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
+  dependencies:
+    esutils "^2.0.2"
 
 domain-browser@^1.1.1:
   version "1.2.0"
@@ -1685,6 +1691,14 @@ es6-map@^0.1.3:
     es6-symbol "~3.1.1"
     event-emitter "~0.3.5"
 
+es6-promise@^3.0.2:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
+
+es6-promise@^4.1.1:
+  version "4.2.4"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.2.4.tgz#dc4221c2b16518760bd8c39a52d8f356fc00ed29"
+
 es6-set@~0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/es6-set/-/es6-set-0.1.5.tgz#d2b3ec5d4d800ced818db538d28974db0a73ccb1"
@@ -1804,7 +1818,31 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-express@^4.16.2:
+express-swagger-generator@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/express-swagger-generator/-/express-swagger-generator-1.1.4.tgz#3c0c0241bed8817b09aab13d6aaf0161eac7c996"
+  dependencies:
+    doctrine "^2.0.0"
+    doctrine-file "^1.0.2"
+    express-swaggerize-ui "^1.0.2"
+    glob "^7.0.3"
+    recursive-iterator "^2.0.3"
+    swagger-parser "^3.4.0"
+
+express-swaggerize-ui@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/express-swaggerize-ui/-/express-swaggerize-ui-1.0.2.tgz#fe35653c56db799532f6eda82bf5f73618f2b4f0"
+  dependencies:
+    express "^4.13.3"
+
+express-validator@latest:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/express-validator/-/express-validator-5.2.0.tgz#28f068fc676022acfe182c97fd9e780f9ffb26f6"
+  dependencies:
+    lodash "^4.17.10"
+    validator "^10.1.0"
+
+express@^4.13.3, express@^4.16.2:
   version "4.16.3"
   resolved "https://registry.yarnpkg.com/express/-/express-4.16.3.tgz#6af8a502350db3246ecc4becf6b5a34d22f7ed53"
   dependencies:
@@ -2046,7 +2084,7 @@ glob-parent@^3.1.0:
     is-glob "^3.1.0"
     path-dirname "^1.0.0"
 
-glob@7.1.2, glob@^7.0.0, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2:
+glob@7.1.2, glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
   dependencies:
@@ -2476,7 +2514,7 @@ js-tokens@^3.0.0, js-tokens@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.2.tgz#9866df395102130e38f7f996bceb65443209c25b"
 
-js-yaml@^3.11.0, js-yaml@^3.7.0:
+js-yaml@^3.11.0, js-yaml@^3.4.6, js-yaml@^3.7.0:
   version "3.12.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.12.0.tgz#eaed656ec8344f10f527c6bfa1b6e2244de167d1"
   dependencies:
@@ -2494,6 +2532,16 @@ jsesc@~0.5.0:
 json-loader@^0.5.4:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/json-loader/-/json-loader-0.5.7.tgz#dca14a70235ff82f0ac9a3abeb60d337a365185d"
+
+json-schema-ref-parser@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/json-schema-ref-parser/-/json-schema-ref-parser-1.4.1.tgz#c0c2e438bf0796723b02451bae8bc7dd0b37fed0"
+  dependencies:
+    call-me-maybe "^1.0.1"
+    debug "^2.2.0"
+    es6-promise "^3.0.2"
+    js-yaml "^3.4.6"
+    ono "^2.0.1"
 
 json-schema-ref-parser@^5.0.3:
   version "5.0.3"
@@ -2773,23 +2821,23 @@ miller-rabin@^4.0.0:
 
 mime-db@~1.12.0:
   version "1.12.0"
-  resolved "https://registry.yarnpkg.com/mime-db.ts/-/mime-db.ts-1.12.0.tgz#3d0c63180f458eb10d325aaa37d7c58ae312e9d7"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.12.0.tgz#3d0c63180f458eb10d325aaa37d7c58ae312e9d7"
 
 mime-db@~1.33.0:
   version "1.33.0"
-  resolved "https://registry.yarnpkg.com/mime-db.ts/-/mime-db.ts-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
+  resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.33.0.tgz#a3492050a5cb9b63450541e39d9788d2272783db"
 
 mime-types@^2.1.12, mime-types@~2.1.18:
   version "2.1.18"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.1.18.tgz#6f323f60a83d11146f831ff11fd66e2fe5503bb8"
   dependencies:
-    mime-db.ts "~1.33.0"
+    mime-db "~1.33.0"
 
 mime-types@~2.0.9:
   version "2.0.14"
   resolved "https://registry.yarnpkg.com/mime-types/-/mime-types-2.0.14.tgz#310e159db23e077f8bb22b748dabfa4957140aa6"
   dependencies:
-    mime-db.ts "~1.12.0"
+    mime-db "~1.12.0"
 
 mime@1.4.1, mime@^1.4.1:
   version "1.4.1"
@@ -2881,7 +2929,7 @@ mocha@^4.0.1:
     mkdirp "0.5.1"
     supports-color "4.4.0"
 
-moment@*, moment@latest:
+moment@latest:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
@@ -3170,7 +3218,11 @@ ono@^1.0.22:
   version "1.0.22"
   resolved "https://registry.yarnpkg.com/ono/-/ono-1.0.22.tgz#5f4ecbea7e3d3e972c0a03a3fd7f361368604a68"
 
-ono@^4.0.3, ono@^4.0.5:
+ono@^2.0.1:
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/ono/-/ono-2.2.5.tgz#daf09488b51174da7a7e4275dfab31b438ffa0e3"
+
+ono@^4.0.2, ono@^4.0.3, ono@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/ono/-/ono-4.0.5.tgz#bc62740493a5c1c08b2c21e60cbb0e5c56ab7de2"
   dependencies:
@@ -3616,6 +3668,10 @@ rechoir@^0.6.2:
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   dependencies:
     resolve "^1.1.6"
+
+recursive-iterator@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/recursive-iterator/-/recursive-iterator-2.0.3.tgz#d0e0d2c7e7a83109d73091cf043fc509e5a76dc3"
 
 reflect-metadata@^0.1.12:
   version "0.1.12"
@@ -4187,6 +4243,19 @@ swagger-parser@>=3.0.0-alpha.8:
     swagger-schema-official "2.0.0-bab6bed"
     z-schema "^3.19.1"
 
+swagger-parser@^3.4.0:
+  version "3.4.2"
+  resolved "https://registry.yarnpkg.com/swagger-parser/-/swagger-parser-3.4.2.tgz#244d67d6eeed08c00acb5d95950d5aefbd6185a3"
+  dependencies:
+    call-me-maybe "^1.0.1"
+    debug "^3.0.0"
+    es6-promise "^4.1.1"
+    json-schema-ref-parser "^1.4.1"
+    ono "^4.0.2"
+    swagger-methods "^1.0.0"
+    swagger-schema-official "2.0.0-bab6bed"
+    z-schema "^3.16.1"
+
 swagger-schema-official@2.0.0-bab6bed:
   version "2.0.0-bab6bed"
   resolved "https://registry.yarnpkg.com/swagger-schema-official/-/swagger-schema-official-2.0.0-bab6bed.tgz#70070468d6d2977ca5237b2e519ca7d06a2ea3fd"
@@ -4521,7 +4590,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@^10.0.0:
+validator@^10.0.0, validator@^10.1.0:
   version "10.4.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.4.0.tgz#ee99a44afb3bb5ed350a159f056ca72a204cfc3c"
 
@@ -4691,7 +4760,7 @@ yn@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/yn/-/yn-2.0.0.tgz#e5adabc8acf408f6385fc76495684c88e6af689a"
 
-z-schema@^3.19.1:
+z-schema@^3.16.1, z-schema@^3.19.1:
   version "3.22.0"
   resolved "https://registry.yarnpkg.com/z-schema/-/z-schema-3.22.0.tgz#e1326063cb438f348c648350770258ff5e20a22b"
   dependencies:

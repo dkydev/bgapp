@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import * as http from 'http';
 import * as os from 'os';
-import * as cookieParser from 'cookie-parser';
+//import * as cookieParser from 'cookie-parser';
 import swaggerify from './swagger';
 import log from './logger';
 import "./db";

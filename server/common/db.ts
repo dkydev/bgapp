@@ -17,9 +17,7 @@ switch (process.env.NODE_ENV) {
 const dbAddress = process.env.DB_HOST || "127.0.0.1";
 const dbPort = process.env.DB_PORT || 27017;
 
-let options = {
-    useMongoClient: true
-};
+let options = {};
 
 if (process.env.DB_AUTH === "true") {
     options["user"] = process.env.DB_USER;

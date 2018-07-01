@@ -1,8 +1,8 @@
-import { IUser, model as User } from "../api/user/model";
+import {IUser, model as User} from "../api/user/model";
 import * as jwt from "jwt-simple";
 import * as passport from "passport";
 import * as moment from "moment";
-import { Strategy, ExtractJwt } from "passport-jwt";
+import {Strategy, ExtractJwt} from "passport-jwt";
 
 class Auth {
     public initialize = () => {
@@ -10,22 +10,23 @@ class Auth {
         return passport.initialize();
     };
 
-    public auth = (err, user, info) => {
-        return auth.authenticate( => {
-            if (err) { return next(err); }
-            if (!user) {
-                if (info.name === "TokenExpiredError") {
-                    return res.status(401).json({ message: "Your token has expired. Please generate a new one" });
-                } else {
-                    return res.status(401).json({ message: info.message });
+    public authenticate = () => {
+        return new Promise((resolve, reject) => {
+            return passport.authenticate("jwt", {session: false, failWithError: true}, (err, user, info) => {
+                if (err) {
+                    reject(err);
                 }
-            }
-            this.app.set("user", user);
-            return next();
-        })(req, res, next);
+                if (!user) {
+                    if (info.name === "TokenExpiredError") {
+                        reject({message: "Your token has expired. Please generate a new one"});
+                    } else {
+                        reject({message: info.message});
+                    }
+                }
+                resolve(user);
+            });
+        });
     }
-
-    public authenticate = (callback) => passport.authenticate("jwt", {session: false, failWithError: true}, callback);
 
     public genToken = (user: IUser): Object => {
         let expires = moment().utc().add({days: 7}).unix();
@@ -44,11 +45,11 @@ class Auth {
     private getStrategy = (): Strategy => {
         const params = {
             secretOrKey: process.env.JWT_SECRET,
-            jwtFromRequest: ExtractJwt.fromAuthHeader(),
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             passReqToCallback: true
         };
 
-        return new Strategy(params, (req, payload: any, done) => {
+        return new Strategy(params, (payload: any, done) => {
             User.findOne({"username": payload.username}, (err, user) => {
                 /* istanbul ignore next: passport response */
                 if (err) {
