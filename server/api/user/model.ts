@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
 import { Document, Schema } from "mongoose";
 
@@ -41,7 +41,7 @@ const userSchema: Schema = new Schema({
     email: {
         type: String,
         match: /^\S+@\S+\.\S+$/,
-        required: true,
+        required: false,
         unique: true,
         trim: true,
         lowercase: true
@@ -71,7 +71,7 @@ const userSchema: Schema = new Schema({
 }, {timestamps: true});
 
 
-userSchema.pre('save', next => {
+userSchema.pre('save', function<IUser>(next) {
 
     if (!this.isModified('password')) return next();
 
@@ -94,5 +94,3 @@ userSchema.methods.comparePassword = function (candidatePassword: string): Promi
 
 export const model = Mongoose.model<IUser>('User', userSchema);
 export const schema = model.schema;
-
-export const cleanCollection = () => model.remove({}).exec();

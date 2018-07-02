@@ -18,14 +18,23 @@ export class UserController {
 
             let user = await User.findOne({"username": req.body.username}).exec();
 
-            if (user === null) throw "User not found";
+            if (user === null) throw "User not found.";
 
             let success = await user.comparePassword(req.body.password);
             if (success === false) throw "";
 
             res.status(200).json(auth.genToken(user));
         } catch (err) {
-            res.status(401).json({"message": "Invalid credentials", "errors": err});
+            res.status(401).json({"message": "Invalid credentials.", "errors": err});
+        }
+    };
+
+    public view = async (req, res) => {
+        try {
+            let user = await User.findOne({"_id": req.body.user._id}).exec();
+            res.status(200).json(user);
+        } catch (err) {
+            res.status(401).json({"message": "User not found.", "errors": err});
         }
     };
 }

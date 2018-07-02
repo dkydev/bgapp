@@ -11,28 +11,23 @@ class Auth {
     };
 
     public authenticate = () => {
-        return new Promise((resolve, reject) => {
-            return passport.authenticate("jwt", {session: false, failWithError: true}, (err, user, info) => {
-                if (err) {
-                    reject(err);
-                }
-                if (!user) {
-                    if (info.name === "TokenExpiredError") {
-                        reject({message: "Your token has expired. Please generate a new one"});
-                    } else {
-                        reject({message: info.message});
-                    }
-                }
-                resolve(user);
-            });
-        });
+
+        return passport.authenticate("jwt", {session: false, failWithError: true});
+
+        //let user:IUser = await passport.authenticate(req, res);
+
+        //if (!user)
+          //  throw {message: "Your token has expired. Please generate a new one"};
     }
 
     public genToken = (user: IUser): Object => {
         let expires = moment().utc().add({days: 7}).unix();
         let token = jwt.encode({
             exp: expires,
-            username: user.username
+            user: {
+                _id: user._id,
+                username: user.username
+            }
         }, process.env.JWT_SECRET);
 
         return {

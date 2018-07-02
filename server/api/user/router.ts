@@ -1,7 +1,8 @@
 import * as express from 'express';
 import UserController from './controller';
+import Auth from "../../common/auth";
 
-export function router(app: express.Application):void {
+export function router(app: express.Application): void {
     /**
      * @api {post} /api/v1/login Generate a token
      * @apiVersion 1.0.0
@@ -36,4 +37,6 @@ export function router(app: express.Application):void {
      *    }
      **/
     app.post(process.env.API_BASE + "login", UserController.login);
+
+    app.post(process.env.API_BASE + "view", Auth.authenticate(), UserController.view);
 };

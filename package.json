@@ -7,10 +7,10 @@
     "start": "cd build && node main",
     "compile": "node build.js && backpack build",
     "dev": "node build.js && backpack dev | pino -o 'short'",
-    "test": "node build.js && mocha test/**/*.ts --exit"
+    "test": "mocha --opts mocha.opts",
+    "test:auto": "mocha --opts mocha.opts --watch"
   },
   "dependencies": {
-    "bcrypt": "latest",
     "bcryptjs": "latest",
     "bluebird": "^3.5.0",
     "body-parser": "^1.18.2",
@@ -25,12 +25,11 @@
     "passport-jwt": "latest",
     "pino": "^4.7.3",
     "reflect-metadata": "^0.1.12",
-    "source-map-support": "^0.4.15",
     "swagger-express-middleware": "^1.0.0-alpha.12",
     "typegoose": "^5.2.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^2.0.0",
+    "@types/bcryptjs": "^2.0.0",
     "@types/bluebird": "^3.5.20",
     "@types/chai": "^4.1.2",
     "@types/cookie-parser": "^1.4.1",
@@ -47,7 +46,9 @@
     "copy-webpack-plugin": "^4.5.1",
     "express-swagger-generator": "^1.1.4",
     "mocha": "^4.0.1",
+    "mockgoose": "latest",
     "shelljs": "^0.7.8",
+    "source-map-support": "^latest",
     "supertest": "^3.0.0",
     "ts-node": "^4.1.0",
     "tslint": "^5.3.2",

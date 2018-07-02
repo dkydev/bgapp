@@ -1,14 +1,36 @@
+import '../server/common/env';
+import * as mongoose from "mongoose";
+import {Mockgoose} from 'mockgoose';
+import {dbURI, dbOptions} from '../server/common/db';
+import "mocha";
+import {IUser, model as User} from "../server/api/user/model";
+import App from '../server/common/server';
+import routes from '../server/routes';
+
 process.env.NODE_ENV = "test";
 
-import "mocha";
-import { IUser, model as User } from "../server/api/user/model";
+// Mock in-memory database.
+let mockgoose: Mockgoose = new Mockgoose(mongoose);
+mockgoose.prepareStorage().then(() => {
+    mongoose.connect(dbURI, dbOptions).then(() => {
+        console.log('db connection is now open');
+    });
+}).catch(() => {
+    console.log('something went wrong');
+});
 
-const express = require("../config/express")();
+// Initialize our app without database.
+var app: App = new App()
+    .router(routes)
+    .listen(parseInt(process.env.PORT));
 
-export const request = require("supertest")(express);
-
+export const request = require("supertest")(app.express);
 export const chai = require("chai");
 export const should = chai.should();
+
+//
+//
+//
 
 const testUser = {"username": "testuser", "password": "mytestpass"};
 
