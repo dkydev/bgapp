@@ -1,7 +1,4 @@
 import '../server/common/env';
-import * as mongoose from "mongoose";
-import {Mockgoose} from 'mockgoose';
-import {dbURI, dbOptions} from '../server/common/db';
 import "mocha";
 import {IUser, model as User} from "../server/api/user/model";
 import App from '../server/common/server';
@@ -9,18 +6,9 @@ import routes from '../server/routes';
 
 process.env.NODE_ENV = "test";
 
-// Mock in-memory database.
-let mockgoose: Mockgoose = new Mockgoose(mongoose);
-mockgoose.prepareStorage().then(() => {
-    mongoose.connect(dbURI, dbOptions).then(() => {
-        console.log('db connection is now open');
-    });
-}).catch(() => {
-    console.log('something went wrong');
-});
-
 // Initialize our app without database.
 var app: App = new App()
+    .initDB("bgl-test")
     .router(routes)
     .listen(parseInt(process.env.PORT));
 
@@ -33,6 +21,8 @@ export const should = chai.should();
 //
 
 const testUser = {"username": "testuser", "password": "mytestpass"};
+
+let testToken:string;
 
 const createUser = async (): Promise<void> => {
     const UserModel = new User(testUser);
@@ -51,7 +41,18 @@ const getUser = async (): Promise<IUser> => {
 
 export const login = async (): Promise<any> => {
     let user = await getUser();
-    return request.post(process.env.API_BASE + "login")
+    let result = await request.post(process.env.API_BASE + "login")
         .send({"username": user.username, "password": testUser.password})
         .expect(200);
+
+    testToken = result.body.token;
+
+    return result;
+};
+
+export const getToken = ():string => {
+    if (testToken == null) {
+        throw "Token does not exist. Must login first.";
+    }
+    return testToken;
 };

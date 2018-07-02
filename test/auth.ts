@@ -1,4 +1,4 @@
-import {request, login} from "./common";
+import {request, login, getToken} from "./common";
 
 describe("# Auth", () => {
 
@@ -35,16 +35,9 @@ describe("# Auth", () => {
     it("should authenticate and return user", () => {
         return login().then(res => {
             return request.post(process.env.API_BASE + "view")
-                .set('Authorization', 'Bearer ' + )
-                .expect(200, done);
+                .set('Authorization', 'Bearer ' + getToken())
+                .expect(200);
         });
-            .send({"username": "testuser", "password": ""})
-            .expect(401)
-            .then(res => {
-                return request.post(endpoint)
-                    .send({"username": "anotherusername", "password": "mypass"})
-                    .expect(401);
-            });
     });
 
 });

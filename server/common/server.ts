@@ -33,8 +33,8 @@ export default class App {
 
     }
 
-    public initDB(): App {
-        dbInit();
+    public initDB(dbName:string): App {
+        dbInit(dbName);
         return this;
     }
 

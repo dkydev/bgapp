@@ -4,6 +4,6 @@ import routes from './routes';
 
 const port = parseInt(process.env.PORT);
 export default new App()
-    .initDB()
+    .initDB(process.env.DB_NAME)
     .router(routes)
     .listen(port);

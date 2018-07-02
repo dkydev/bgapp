@@ -4,3 +4,7 @@ node_modules
 .cfignore
 .idea
 yarn-error.log
+server/**/*.js
+server/**/*.js.map
+test/**/*.js
+test/**/*.js.map
