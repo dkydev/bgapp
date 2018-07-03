@@ -5,10 +5,11 @@ import App from '../server/common/server';
 import routes from '../server/routes';
 
 process.env.NODE_ENV = "test";
+process.env.DB_NAME = "bgl-test";
 
 // Initialize our app without database.
 var app: App = new App()
-    .initDB("bgl-test")
+    .initDB()
     .router(routes)
     .listen(parseInt(process.env.PORT));
 
@@ -41,12 +42,11 @@ const getUser = async (): Promise<IUser> => {
 
 export const login = async (): Promise<any> => {
     let user = await getUser();
-    let result = await request.post(process.env.API_BASE + "login")
+    let result = await request
+        .post(process.env.API_BASE + "login")
         .send({"username": user.username, "password": testUser.password})
         .expect(200);
-
     testToken = result.body.token;
-
     return result;
 };
 

@@ -31,7 +31,7 @@ export function router(app: express.Application): void {
      * @apiSuccessExample {json} Success response:
      *     HTTPS 200 OK
      *     {
-     *      "token": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9 ... and the rest of the token here",
+     *      "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9 ... and the rest of the token here",
      *      "expires": "2017-10-28T14:50:17+00:00",
      *      "user": "57e12cab65c0c892381b8b44"
      *    }

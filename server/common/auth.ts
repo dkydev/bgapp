@@ -31,7 +31,7 @@ class Auth {
         }, process.env.JWT_SECRET);
 
         return {
-            token: "JWT " + token,
+            token: token,
             expires: moment.unix(expires).format(),
             user: user._id
         };
@@ -44,8 +44,8 @@ class Auth {
             passReqToCallback: true
         };
 
-        return new Strategy(params, (payload: any, done) => {
-            User.findOne({"username": payload.username}, (err, user) => {
+        return new Strategy(params, (request, payload: any, done) => {
+            User.findOne({"_id": payload.user._id}, (err, user) => {
                 /* istanbul ignore next: passport response */
                 if (err) {
                     return done(err);
@@ -55,7 +55,9 @@ class Auth {
                     return done(null, false, {message: "The user in the token was not found"});
                 }
 
-                return done(null, {_id: user._id, username: user.username});
+                request.body.user = user;
+
+                return done(null, {user: user});
             });
         });
     };

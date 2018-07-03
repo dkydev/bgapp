@@ -32,6 +32,17 @@ describe("# Auth", () => {
             });
     });
 
+    it("should fail to view user invalid token", () => {
+        return request.post(process.env.API_BASE + "view")
+            .set('Authorization', 'Bearer awdawdawd')
+            .expect(401);
+    });
+
+    it("should fail to view user no token", () => {
+        return request.post(process.env.API_BASE + "view")
+            .expect(401);
+    });
+
     it("should authenticate and return user", () => {
         return login().then(res => {
             return request.post(process.env.API_BASE + "view")
@@ -40,4 +51,5 @@ describe("# Auth", () => {
         });
     });
 
-});
+})
+;
