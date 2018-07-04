@@ -38,5 +38,7 @@ export function router(app: express.Application): void {
      **/
     app.post(process.env.API_BASE + "login", UserController.login);
 
+    app.post(process.env.API_BASE + "register", UserController.register);
+
     app.post(process.env.API_BASE + "view", Auth.authenticate(), UserController.view);
 };

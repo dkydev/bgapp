@@ -24,3 +24,12 @@ export function dbInit() {
     });
 
 }
+
+export function dbClose(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        mongoose.disconnect(error => {
+            if (error) reject(error);
+            resolve();
+        })
+    });
+}

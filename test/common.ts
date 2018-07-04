@@ -21,17 +21,30 @@ export const should = chai.should();
 //
 //
 
-const testUser = {"username": "testuser", "password": "mytestpass"};
+after(async () => {
+    await app.stopListening();
+    await app.closeDB();
+});
 
-let testToken:string;
+//
+//
+//
 
-const createUser = async (): Promise<void> => {
+export const testUser = {"username": "testuser", "password": "mytestpass"};
+
+let testToken: string;
+
+export const createUser = async (): Promise<void> => {
     const UserModel = new User(testUser);
     await UserModel.save();
 };
 
+export const deleteUser = async (username: string): Promise<void> => {
+    await User.findOneAndRemove({username: username});
+};
+
 const getUser = async (): Promise<IUser> => {
-    let users = await User.find({});
+    let users = await User.find({"username": testUser.username});
     if (users.length === 0) {
         await createUser();
         return getUser();
@@ -47,10 +60,10 @@ export const login = async (): Promise<any> => {
         .send({"username": user.username, "password": testUser.password})
         .expect(200);
     testToken = result.body.token;
-    return result;
+    return testToken;
 };
 
-export const getToken = ():string => {
+export const getToken = (): string => {
     if (testToken == null) {
         throw "Token does not exist. Must login first.";
     }

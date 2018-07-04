@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
-import { Document, Schema } from "mongoose";
+import {Document, Schema, Model} from "mongoose";
 
 export interface IUser extends Document {
     username: string;
@@ -9,9 +9,20 @@ export interface IUser extends Document {
     totalXP: number,
     leagues: IUserLeague[],
 
-    comparePassword: (string) => boolean
+    comparePassword: (string) => boolean,
     //generateJWT: () => string;
 };
+
+export interface IUserView {
+    username: string;
+    email: string,
+    totalXP: number,
+    leagues: IUserLeague[]
+}
+
+export interface IUserModel extends Model<IUser> {
+    view: (string) => IUser
+}
 
 export interface IUserLeague extends Document {
     isAdmin: boolean,
@@ -43,6 +54,7 @@ const userSchema: Schema = new Schema({
         match: /^\S+@\S+\.\S+$/,
         required: false,
         unique: true,
+        sparse: true, // Allow null or unique.
         trim: true,
         lowercase: true
     },
@@ -56,6 +68,7 @@ const userSchema: Schema = new Schema({
 
     username: {
         type: String,
+        unique: true,
         index: true,
         trim: true
     },
@@ -71,7 +84,7 @@ const userSchema: Schema = new Schema({
 }, {timestamps: true});
 
 
-userSchema.pre('save', function<IUser>(next) {
+userSchema.pre('save', function <IUser>(next) {
 
     if (!this.isModified('password')) return next();
 
@@ -81,6 +94,23 @@ userSchema.pre('save', function<IUser>(next) {
     }).catch(next);
 
 });
+
+userSchema.statics.view = (id: string): Promise<IUserView> => {
+    return new Promise((resolve, reject) => {
+        model.findById(id, (err, user: IUser) => {
+            if (err) return reject(err);
+            if (!user) reject("User not found");
+
+            let userView: IUserView = {
+                username: user.username,
+                email: user.email,
+                totalXP: user.totalXP,
+                leagues: user.leagues
+            };
+            resolve(userView);
+        });
+    });
+};
 
 userSchema.methods.comparePassword = function (candidatePassword: string): Promise<boolean> {
     let password = this.password;
@@ -92,5 +122,5 @@ userSchema.methods.comparePassword = function (candidatePassword: string): Promi
     });
 };
 
-export const model = Mongoose.model<IUser>('User', userSchema);
+export const model: IUserModel = Mongoose.model<IUser, IUserModel>('User', userSchema);
 export const schema = model.schema;

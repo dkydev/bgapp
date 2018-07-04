@@ -1,11 +1,28 @@
-import { model as User, IUser } from './model';
+import {model as User, IUser, IUserView} from './model';
 import auth from '../../common/auth';
+import {testUser} from "../../../test/common";
 
 
 export class UserController {
 
-    public register = async () => {
+    public register = async (req, res) => {
+        try {
+            req.checkBody("username", "Username required").notEmpty();
+            req.checkBody("password", "Password required").notEmpty();
 
+            let errors = req.validationErrors();
+            if (errors) throw errors;
+
+            let user: IUser = await new User({
+                "username": req.body.username,
+                "password": req.body.password,
+                "email": req.body.email,
+            }).save();
+
+            res.status(200).json(auth.genToken(user));
+        } catch (err) {
+            res.status(401).json({"message": "Invalid parameters.", "errors": err});
+        }
     };
 
     public login = async (req, res) => {
@@ -31,8 +48,8 @@ export class UserController {
 
     public view = async (req, res) => {
         try {
-            let user = await User.findOne({"_id": req.body.user._id}).exec();
-            res.status(200).json(user);
+            let user: IUserView = await User.view(req.body.user.id);
+            res.status(200).json({user: user});
         } catch (err) {
             res.status(401).json({"message": "User not found.", "errors": err});
         }

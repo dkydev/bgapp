@@ -6,13 +6,14 @@ import * as os from 'os';
 //import * as cookieParser from 'cookie-parser';
 import swaggerify from './swagger';
 import log from './logger';
-import {dbInit} from "./db";
+import {dbInit, dbClose} from "./db";
 import auth from './auth';
 import * as expressValidator from 'express-validator';
 
 export default class App {
 
     public readonly express: express.Application;
+    public server: http.Server;
 
     constructor() {
         const root = path.normalize(__dirname + '/../..');
@@ -47,7 +48,19 @@ export default class App {
     public listen(port: number = parseInt(process.env.PORT)): App {
         const welcome = port => () =>
             log.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname() } on port: ${port}}`);
-        http.createServer(this.express).listen(port, welcome(port));
+        this.server = http.createServer(this.express).listen(port, welcome(port));
         return this;
+    }
+
+    public stopListening(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.server.close(() => {
+                resolve();
+            });
+        });
+    }
+
+    public closeDB(): Promise<void> {
+        return dbClose();
     }
 }
