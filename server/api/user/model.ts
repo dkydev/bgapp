@@ -47,7 +47,7 @@ const userLeagueSchema: Schema = new Schema({
 
 }, {timestamps: true});
 
-const userSchema: Schema = new Schema({
+export const userSchema: Schema = new Schema({
 
     email: {
         type: String,
@@ -56,7 +56,9 @@ const userSchema: Schema = new Schema({
         unique: true,
         sparse: true, // Allow null or unique.
         trim: true,
-        lowercase: true
+        lowercase: true,
+        minlength: 3,
+        maxlength: 255,
     },
 
     password: {
@@ -64,13 +66,16 @@ const userSchema: Schema = new Schema({
         required: false,
         minlength: 6,
         maxlength: 30,
+        trim: true,
     },
 
     username: {
         type: String,
         unique: true,
         index: true,
-        trim: true
+        trim: true,
+        minlength: 1,
+        maxlength: 30,
     },
 
     totalXP: {

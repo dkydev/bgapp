@@ -33,7 +33,7 @@ describe("# User", () => {
 
     it("should view a user", async () => {
         let token: string = await login();
-        let res = await request.post(process.env.API_BASE + "view").set('Authorization', 'Bearer ' + token).expect(200);
+        let res = await request.get(process.env.API_BASE + "user").set('Authorization', 'Bearer ' + token).expect(200);
 
         // Should have a user object.
         expect(res.body.user).to.not.be.empty;

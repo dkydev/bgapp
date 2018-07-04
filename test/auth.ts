@@ -29,21 +29,28 @@ describe("# Auth", () => {
     });
 
     it("should fail to view user invalid token", async () => {
-        await request.post(process.env.API_BASE + "view")
+        await request.get(process.env.API_BASE + "user")
             .set('Authorization', 'Bearer awdawdawd')
             .expect(401);
     });
 
     it("should fail to view user no token", async () => {
-        return request.post(process.env.API_BASE + "view")
+        return request.get(process.env.API_BASE + "user")
             .expect(401);
     });
 
     it("should authenticate and return user", async () => {
         await login()
-        await request.post(process.env.API_BASE + "view")
+        await request.get(process.env.API_BASE + "user")
             .set('Authorization', 'Bearer ' + getToken())
             .expect(200);
+    });
+
+    it("should 404 cannot post to user", async () => {
+        await login()
+        await request.post(process.env.API_BASE + "user")
+            .set('Authorization', 'Bearer ' + getToken())
+            .expect(404);
     });
 
 })
