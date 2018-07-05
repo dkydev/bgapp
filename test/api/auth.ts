@@ -1,4 +1,4 @@
-import {request, login, getToken, testUser, createUser, deleteUser} from "./common";
+import {request, login, getToken, testUser, createUser, deleteUser} from "../common";
 import {expect} from "chai";
 
 describe("# Auth", () => {

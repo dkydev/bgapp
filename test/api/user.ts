@@ -1,4 +1,4 @@
-import {request, login, getToken, testUser, deleteUser, createUser} from "./common";
+import {request, login, getToken, testUser, deleteUser, createUser} from "../common";
 import {expect} from "chai";
 
 //beforeEach(async function() {

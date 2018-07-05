@@ -1,6 +1,6 @@
-import {request, login, getToken, testUser, deleteUser, createUser} from "./common";
+import {request, login, getToken, testUser, deleteUser, createUser, getUserId} from "../common";
 import {expect} from "chai";
-import {model as League} from "../server/api/league/model";
+import {model as League, ILeague} from "../../server/api/league/model";
 
 //beforeEach(async function() {
 //});
@@ -26,6 +26,18 @@ describe("# League", () => {
             .send(testCreateLeague).expect(200);
 
         expect(res.body.id).to.not.be.empty;
+
+        // Expect league has user as only user and is admin.
+
+        let league:ILeague = await League.findById(res.body.id);
+
+        expect(league).to.not.be.empty;
+        expect(league.name).to.equal(testCreateLeague.name);
+        expect(league.description).to.equal(testCreateLeague.description);
+        expect(league.users).to.have.lengthOf(1);
+        expect(league.users[0].toString()).to.equal(getUserId());
+
+        // Delete league.
     });
 
     it("should fail authentication trying to create a league", async () => {

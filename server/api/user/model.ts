@@ -1,6 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
+import {IUserLeague} from "../userleague/model";
 
 export interface IUser extends Document {
     username: string;
@@ -23,29 +24,6 @@ export interface IUserView {
 export interface IUserModel extends Model<IUser> {
     view: (string) => IUser
 }
-
-export interface IUserLeague extends Document {
-    isAdmin: boolean,
-    leagueID: string,
-    leagueXP: number
-}
-
-const userLeagueSchema: Schema = new Schema({
-
-    isAdmin: {
-        type: Boolean,
-        default: false
-    },
-
-    leagueID: Schema.Types.ObjectId,
-
-    leagueXP: {
-        type: Number,
-        min: 0,
-        max: Number.MAX_SAFE_INTEGER
-    }
-
-}, {timestamps: true});
 
 export const userSchema: Schema = new Schema({
 
@@ -84,7 +62,10 @@ export const userSchema: Schema = new Schema({
         max: Number.MAX_SAFE_INTEGER
     },
 
-    leagues: [userLeagueSchema],
+    leagues: [{
+        type: Schema.Types.ObjectId,
+        ref: 'UserLeague'
+    }],
 
 }, {timestamps: true});
 

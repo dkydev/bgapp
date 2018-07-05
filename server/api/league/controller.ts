@@ -1,4 +1,5 @@
 import {model as League, ILeague} from './model';
+import {model as UserLeague} from '../userleague/model';
 
 export class LeagueController {
 
@@ -13,6 +14,14 @@ export class LeagueController {
             let league: ILeague = await new League({
                 "name": req.body.name,
                 "description": req.body.description,
+            }).save();
+
+            // Add user to new league.
+            let userLeague = await new UserLeague({
+                isAdmin : true,
+                league : league.id,
+                user : req.body.user.id,
+                leagueXP : 0
             }).save();
 
             res.status(200).json({id: league.id});

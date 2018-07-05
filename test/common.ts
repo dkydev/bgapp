@@ -21,6 +21,10 @@ export const should = chai.should();
 //
 //
 
+before(async () => {
+    await deleteUser(testUser.username);
+});
+
 after(async () => {
     await app.stopListening();
     await app.closeDB();
@@ -34,9 +38,12 @@ export const testUser = {"username": "testuser", "password": "mytestpass"};
 
 let testToken: string;
 
+let userId:string;
+
 export const createUser = async (): Promise<void> => {
     const UserModel = new User(testUser);
-    await UserModel.save();
+    let user:IUser = await UserModel.save();
+    userId = user.id;
 };
 
 export const deleteUser = async (username: string): Promise<void> => {
@@ -68,4 +75,8 @@ export const getToken = (): string => {
         throw "Token does not exist. Must login first.";
     }
     return testToken;
+};
+
+export const getUserId = (): string => {
+    return userId;
 };
