@@ -22,7 +22,6 @@ export const should = chai.should();
 //
 
 before(async () => {
-    await deleteUser(testUser.username);
 });
 
 after(async () => {
@@ -37,31 +36,26 @@ after(async () => {
 export const testUser = {"username": "testuser", "password": "mytestpass"};
 
 let testToken: string;
+let userId: string;
 
-let userId:string;
-
-export const createUser = async (): Promise<void> => {
+export const createTestUser = async (): Promise<void> => {
     const UserModel = new User(testUser);
-    let user:IUser = await UserModel.save();
+    let user: IUser = await UserModel.save();
     userId = user.id;
 };
 
-export const deleteUser = async (username: string): Promise<void> => {
-    await User.findOneAndRemove({username: username});
-};
-
-const getUser = async (): Promise<IUser> => {
+export const getTestUser = async (): Promise<IUser> => {
     let users = await User.find({"username": testUser.username});
     if (users.length === 0) {
-        await createUser();
-        return getUser();
+        await createTestUser();
+        return getTestUser();
     } else {
         return users[0];
     }
 };
 
 export const login = async (): Promise<any> => {
-    let user = await getUser();
+    let user = await getTestUser();
     let result = await request
         .post(process.env.API_BASE + "login")
         .send({"username": user.username, "password": testUser.password})
@@ -70,13 +64,9 @@ export const login = async (): Promise<any> => {
     return testToken;
 };
 
-export const getToken = (): string => {
+export const getTestUserToken = (): string => {
     if (testToken == null) {
         throw "Token does not exist. Must login first.";
     }
     return testToken;
-};
-
-export const getUserId = (): string => {
-    return userId;
 };

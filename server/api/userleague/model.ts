@@ -1,12 +1,13 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {model as User} from "../user/model";
-import {model as League} from "../league/model";
+import {model as User, IUser} from "../user/model";
+import {model as League, ILeague} from "../league/model";
 
 export interface IUserLeague extends Document {
-    isAdmin: boolean,
-    leagueID: string,
-    leagueXP: number
+    user_id: IUser | string,
+    league_id: ILeague | string,
+    is_admin: boolean,
+    league_xp: number
 }
 
 export interface IUserLeagueModel extends Model<IUserLeague> {
@@ -15,24 +16,24 @@ export interface IUserLeagueModel extends Model<IUserLeague> {
 
 export const userLeagueSchema: Schema = new Schema({
 
-    isAdmin: {
+    is_admin: {
         type: Boolean,
         default: false
     },
 
-    user: {
+    user_id: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'user',
         required: true
     },
 
-    league: {
+    league_id: {
         type: Schema.Types.ObjectId,
-        ref: 'League',
+        ref: 'league',
         required: true
     },
 
-    leagueXP: {
+    league_xp: {
         type: Number,
         min: 0,
         max: Number.MAX_SAFE_INTEGER
@@ -44,8 +45,7 @@ export const userLeagueSchema: Schema = new Schema({
 userLeagueSchema.post('save', async function <IUserLeague>() {
 
     await Promise.all([
-        User.findByIdAndUpdate(this.user, {$push: {leagues: this.id}}),
-        League.findByIdAndUpdate(this.league, {$push: {users: this.id}}),
+        League.findByIdAndUpdate(this.league_id, {$push: {user_leagues: this.id}}),
     ]);
 
 });
@@ -53,11 +53,10 @@ userLeagueSchema.post('save', async function <IUserLeague>() {
 userLeagueSchema.post('remove', async function <IUserLeague>() {
 
     await Promise.all([
-        User.findByIdAndUpdate(this.user, {$pull: {leagues: this.id}}),
-        League.findByIdAndUpdate(this.league, {$pull: {users: this.id}}),
+        League.findByIdAndUpdate(this.league_id, {$pull: {user_leagues: this.id}}),
     ]);
 
 });
 
-export const model: IUserLeagueModel = Mongoose.model<IUserLeague, IUserLeagueModel>('UserLeague', userLeagueSchema);
+export const model: IUserLeagueModel = Mongoose.model<IUserLeague, IUserLeagueModel>('user_league', userLeagueSchema);
 export const schema = model.schema;

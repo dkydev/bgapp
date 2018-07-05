@@ -25,6 +25,7 @@
     "passport-jwt": "latest",
     "pino": "^4.7.3",
     "reflect-metadata": "^0.1.12",
+    "shortid": "^2.2.8",
     "swagger-express-middleware": "^1.0.0-alpha.12",
     "typegoose": "^5.2.1"
   },

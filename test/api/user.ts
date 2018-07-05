@@ -1,8 +1,10 @@
-import {request, login, getToken, testUser, deleteUser, createUser} from "../common";
+import {request, login, getTestUserToken, testUser, createTestUser} from "../common";
 import {expect} from "chai";
+import {model as User} from "../../server/api/user/model";
 
-//beforeEach(async function() {
-//});
+before(async () => {
+    await User.remove({});
+});
 
 describe("# User", () => {
 
@@ -14,8 +16,8 @@ describe("# User", () => {
             password: "testPassword"
         };
 
-        // Delete user if re-test.
-        await deleteUser(testRegisterUser.username);
+        // Clean up user_leagues if re-test.
+        await User.remove({});
 
         // Register.
         let res = await request.post(process.env.API_BASE + "register").send(testRegisterUser).expect(200);
@@ -40,6 +42,9 @@ describe("# User", () => {
 
         // Username is the test username.
         expect(res.body.user.username).to.equal(testUser.username);
+
+        // User leagues should be an empty array.
+        expect(res.body.user.user_leagues).to.not.be.undefined;
 
         // Password should not be returned.
         expect(res.body.user.password).to.be.undefined;

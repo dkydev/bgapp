@@ -1,14 +1,13 @@
 import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {IUserLeague} from "../userleague/model";
+import {IUserLeague, model as UserLeague} from "../userleague/model";
 
 export interface IUser extends Document {
     username: string;
     email: string,
     password: string,
-    totalXP: number,
-    leagues: IUserLeague[],
+    total_xp: number,
 
     comparePassword: (string) => boolean,
     //generateJWT: () => string;
@@ -17,12 +16,12 @@ export interface IUser extends Document {
 export interface IUserView {
     username: string;
     email: string,
-    totalXP: number,
-    leagues: IUserLeague[]
+    total_xp: number,
+    user_leagues: IUserLeague[]
 }
 
 export interface IUserModel extends Model<IUser> {
-    view: (string) => IUser
+    view: (string) => IUserView
 }
 
 export const userSchema: Schema = new Schema({
@@ -56,16 +55,11 @@ export const userSchema: Schema = new Schema({
         maxlength: 30,
     },
 
-    totalXP: {
+    total_xp: {
         type: Number,
         min: 0,
         max: Number.MAX_SAFE_INTEGER
-    },
-
-    leagues: [{
-        type: Schema.Types.ObjectId,
-        ref: 'UserLeague'
-    }],
+    }
 
 }, {timestamps: true});
 
@@ -81,26 +75,22 @@ userSchema.pre('save', function <IUser>(next) {
 
 });
 
-userSchema.statics.view = (id: string): Promise<IUserView> => {
-    return new Promise((resolve, reject) => {
-        model.findById(id, (err, user: IUser) => {
-            if (err) return reject(err);
-            if (!user) reject("User not found");
+userSchema.statics.view = async (id: string): Promise<IUserView> => {
 
-            let userView: IUserView = {
-                username: user.username,
-                email: user.email,
-                totalXP: user.totalXP,
-                leagues: user.leagues
-            };
-            resolve(userView);
-        });
-    });
+    let user: IUser = await model.findById(id);
+    let userView: IUserView = {
+        username: user.username,
+        email: user.email,
+        total_xp: user.total_xp,
+        user_leagues: await UserLeague.find({user_id: user.id}).populate("league_id")
+    };
+
+    return userView;
 };
 
-userSchema.methods.comparePassword = function (candidatePassword: string): Promise<boolean> {
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
     let password = this.password;
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
         bcrypt.compare(candidatePassword, password, (err, success) => {
             if (err) return reject(err);
             return resolve(success);
@@ -108,5 +98,5 @@ userSchema.methods.comparePassword = function (candidatePassword: string): Promi
     });
 };
 
-export const model: IUserModel = Mongoose.model<IUser, IUserModel>('User', userSchema);
+export const model: IUserModel = Mongoose.model<IUser, IUserModel>('user', userSchema);
 export const schema = model.schema;

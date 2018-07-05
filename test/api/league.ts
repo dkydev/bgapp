@@ -1,9 +1,13 @@
-import {request, login, getToken, testUser, deleteUser, createUser, getUserId} from "../common";
+import {request, login, getTestUserToken, testUser, createTestUser, getTestUser} from "../common";
 import {expect} from "chai";
 import {model as League, ILeague} from "../../server/api/league/model";
+import {model as UserLeague, IUserLeague} from "../../server/api/userleague/model";
+import {model as User, IUser, IUserView} from "../../server/api/user/model";
 
-//beforeEach(async function() {
-//});
+before(async () => {
+    await League.remove({});
+    await UserLeague.remove({});
+});
 
 describe("# League", () => {
 
@@ -14,8 +18,9 @@ describe("# League", () => {
             description: "a very nice league",
         };
 
-        // Delete league if re-test.
+        // Delete league/user if re-test.
         await League.deleteOne({name: testCreateLeague.name});
+        await User.deleteOne({username: testUser.username});
 
         // Login.
         let token: string = await login();
@@ -29,15 +34,22 @@ describe("# League", () => {
 
         // Expect league has user as only user and is admin.
 
-        let league:ILeague = await League.findById(res.body.id);
+        let league: ILeague = await League.findById(res.body.id).populate("user_leagues");
+        let user: IUser = await getTestUser();
 
         expect(league).to.not.be.empty;
         expect(league.name).to.equal(testCreateLeague.name);
         expect(league.description).to.equal(testCreateLeague.description);
-        expect(league.users).to.have.lengthOf(1);
-        expect(league.users[0].toString()).to.equal(getUserId());
+        expect(league.code).to.not.be.empty;
+        expect(league.user_leagues).to.have.lengthOf(1);
+        expect(league.user_leagues[0].user_id.toString()).to.equal(user.id);
 
-        // Delete league.
+        // Get user 'view' and expect user_leagues to populate dynamically.
+        let userView:IUserView = await User.view(user.id);
+        expect(userView.user_leagues).to.have.lengthOf(1);
+        expect((userView.user_leagues[0].league_id as ILeague).name).to.equal(testCreateLeague.name);
+        expect((userView.user_leagues[0].league_id as ILeague).description).to.equal(testCreateLeague.description);
+
     });
 
     it("should fail authentication trying to create a league", async () => {

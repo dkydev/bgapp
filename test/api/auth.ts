@@ -1,5 +1,10 @@
-import {request, login, getToken, testUser, createUser, deleteUser} from "../common";
+import {request, login, getTestUserToken, testUser, getTestUser} from "../common";
 import {expect} from "chai";
+import {model as User} from "../../server/api/user/model";
+
+before(async () => {
+    await User.remove({});
+});
 
 describe("# Auth", () => {
 
@@ -9,8 +14,11 @@ describe("# Auth", () => {
     });
 
     it("should not login with the right user but wrong password", async () => {
-        await deleteUser(testUser.username);
-        await createUser();
+
+        // Create a test user if not already exists.
+        await getTestUser();
+
+        // Login with bad password.
         await request.post(process.env.API_BASE + "login")
             .send({"username": testUser.username, "password": "anythingGoesHere"})
             .expect(401);
@@ -42,14 +50,14 @@ describe("# Auth", () => {
     it("should authenticate and return user", async () => {
         await login()
         await request.get(process.env.API_BASE + "user")
-            .set('Authorization', 'Bearer ' + getToken())
+            .set('Authorization', 'Bearer ' + getTestUserToken())
             .expect(200);
     });
 
     it("should 404 cannot post to user", async () => {
         await login()
         await request.post(process.env.API_BASE + "user")
-            .set('Authorization', 'Bearer ' + getToken())
+            .set('Authorization', 'Bearer ' + getTestUserToken())
             .expect(404);
     });
 

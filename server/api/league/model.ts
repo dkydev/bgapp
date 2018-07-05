@@ -1,11 +1,13 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {IUserLeague} from "../userleague/model";
+import * as shortid from 'shortid';
 
 export interface ILeague extends Document {
     name: string;
     description: string,
-    users: IUserLeague[]
+    code: string,
+    user_leagues: IUserLeague[]
 }
 
 export interface ILeagueModel extends Model<ILeague> {
@@ -18,10 +20,14 @@ export const leagueSchema: Schema = new Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
         trim: true,
         minlength: 1,
         maxlength: 30,
+    },
+
+    code: {
+        type: String,
+        default: shortid.generate
     },
 
     description: {
@@ -32,12 +38,12 @@ export const leagueSchema: Schema = new Schema({
         maxlength: 255,
     },
 
-    users: [{
+    user_leagues: [{
         type: Schema.Types.ObjectId,
-        ref: 'UserLeague'
+        ref: 'user_league'
     }]
 
 }, {timestamps: true});
 
-export const model: ILeagueModel = Mongoose.model<ILeague, ILeagueModel>('League', leagueSchema);
+export const model: ILeagueModel = Mongoose.model<ILeague, ILeagueModel>('league', leagueSchema);
 export const schema = model.schema;
