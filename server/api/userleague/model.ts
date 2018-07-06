@@ -2,6 +2,7 @@ import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {model as User, IUser} from "../user/model";
 import {model as League, ILeague} from "../league/model";
+import {model as UserLeague} from "../userleague/model";
 
 export interface IUserLeague extends Document {
     user_id: IUser | string,

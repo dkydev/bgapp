@@ -2,6 +2,7 @@ import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {IUserLeague, model as UserLeague} from "../userleague/model";
+import {testUser} from "../../../test/common";
 
 export interface IUser extends Document {
     username: string;
@@ -96,6 +97,10 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
             return resolve(success);
         });
     });
+};
+
+export const createUser = async (data:any): Promise<IUser> => {
+    return await new model(data).save();
 };
 
 export const model: IUserModel = Mongoose.model<IUser, IUserModel>('user', userSchema);

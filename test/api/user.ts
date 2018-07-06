@@ -1,10 +1,6 @@
-import {request, login, getTestUserToken, testUser, createTestUser} from "../common";
+import {request, login, testUser} from "../common";
 import {expect} from "chai";
 import {model as User} from "../../server/api/user/model";
-
-before(async () => {
-    await User.remove({});
-});
 
 describe("# User", () => {
 

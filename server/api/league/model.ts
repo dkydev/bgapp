@@ -1,6 +1,6 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {IUserLeague} from "../userleague/model";
+import {IUserLeague, model as UserLeague} from "../userleague/model";
 import * as shortid from 'shortid';
 
 export interface ILeague extends Document {
@@ -44,6 +44,21 @@ export const leagueSchema: Schema = new Schema({
     }]
 
 }, {timestamps: true});
+
+export const createLeague = async (user_id: string, data: any): Promise<ILeague> => {
+
+    let league: ILeague = await new model(data).save();
+
+    // Add user to new league.
+    await new UserLeague({
+        user_id: user_id,
+        league_id: league.id,
+        is_admin: true,
+        league_xp: 0
+    }).save();
+
+    return league;
+};
 
 export const model: ILeagueModel = Mongoose.model<ILeague, ILeagueModel>('league', leagueSchema);
 export const schema = model.schema;

@@ -1,4 +1,4 @@
-import {request, login, getTestUserToken, testUser, getTestUser} from "../common";
+import {request, login, testUser, getTestUser} from "../common";
 import {expect} from "chai";
 import {model as User} from "../../server/api/user/model";
 
@@ -48,16 +48,16 @@ describe("# Auth", () => {
     });
 
     it("should authenticate and return user", async () => {
-        await login()
+        let token: string = await login();
         await request.get(process.env.API_BASE + "user")
-            .set('Authorization', 'Bearer ' + getTestUserToken())
+            .set('Authorization', 'Bearer ' + token)
             .expect(200);
     });
 
     it("should 404 cannot post to user", async () => {
-        await login()
+        let token: string = await login();
         await request.post(process.env.API_BASE + "user")
-            .set('Authorization', 'Bearer ' + getTestUserToken())
+            .set('Authorization', 'Bearer ' + token)
             .expect(404);
     });
 

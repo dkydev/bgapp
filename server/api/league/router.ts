@@ -7,9 +7,7 @@ export function router(app: express.Application): void {
 
     app.get(process.env.API_BASE + "league", Auth.authenticate(), LeagueController.view);
 
-    /*
-    app.post(process.env.API_BASE + "league", Auth.authenticate(), LeagueController.join);
+    app.post(process.env.API_BASE + "join", Auth.authenticate(), LeagueController.join);
 
-    app.post(process.env.API_BASE + "league", Auth.authenticate(), LeagueController.leave);
-    */
+    app.post(process.env.API_BASE + "leave", Auth.authenticate(), LeagueController.leave);
 };
