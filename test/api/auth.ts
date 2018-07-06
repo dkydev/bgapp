@@ -63,6 +63,7 @@ describe("# Auth", () => {
         let token: string = await login();
         let res = await request.get(process.env.API_BASE + "user")
             .set('Authorization', 'Bearer ' + token)
+            .send({user_id: (await getTestUser()).id})
             .expect(200);
 
         expect(res.body.user).to.not.be.empty;

@@ -1,4 +1,4 @@
-import {request, login, testUser} from "../common";
+import {request, login, testUser, getTestUser} from "../common";
 import {expect} from "chai";
 import {model as User} from "../../server/api/user/model";
 
@@ -33,7 +33,10 @@ describe("# User", () => {
 
     it("should view a user", async () => {
         let token: string = await login();
-        let res = await request.get(process.env.API_BASE + "user").set('Authorization', 'Bearer ' + token).expect(200);
+        let res = await request.get(process.env.API_BASE + "user")
+            .set('Authorization', 'Bearer ' + token)
+            .send({user_id: (await getTestUser()).id})
+            .expect(200);
 
         // Should have a user object.
         expect(res.body.user).to.not.be.empty;
@@ -46,6 +49,27 @@ describe("# User", () => {
 
         // Password should not be returned.
         expect(res.body.user.password).to.be.undefined;
+    });
+
+    it("should not find a user to view", async () => {
+        let token: string = await login();
+        let res = await request.get(process.env.API_BASE + "user")
+            .set('Authorization', 'Bearer ' + token)
+            .send({user_id: "notauserid"})
+            .expect(400);
+
+        // Should have a user object.
+        expect(res.body.message).to.equal("User not found.");
+    });
+
+    it("should not validate trying to view a user", async () => {
+        let token: string = await login();
+        let res = await request.get(process.env.API_BASE + "user")
+            .set('Authorization', 'Bearer ' + token)
+            .expect(400);
+
+        // Should have a user object.
+        expect(res.body.message).to.equal("Invalid parameters.");
     });
 
 });
