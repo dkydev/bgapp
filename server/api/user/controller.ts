@@ -21,7 +21,7 @@ export class UserController {
 
             res.status(200).json(auth.genToken(user));
         } catch (err) {
-            res.status(401).json({"message": "Invalid parameters.", "errors": err});
+            res.status(400).json({"message": "Invalid parameters.", "errors": err});
         }
     };
 
@@ -42,7 +42,7 @@ export class UserController {
 
             res.status(200).json(auth.genToken(user));
         } catch (err) {
-            res.status(401).json({"message": "Invalid credentials.", "errors": err});
+            res.status(400).json({"message": "Invalid credentials.", "errors": err});
         }
     };
 
@@ -51,7 +51,7 @@ export class UserController {
             let user: IUserView = await User.view(req.body.user.id);
             res.status(200).json({user: user});
         } catch (err) {
-            res.status(401).json({"message": "User not found.", "errors": err});
+            res.status(400).json({"message": "User not found.", "errors": err});
         }
     };
 }

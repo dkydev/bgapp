@@ -17,7 +17,7 @@ export class LeagueController {
 
             res.status(200).json({"message": `Created league ${league.name}.`});
         } catch (err) {
-            res.status(401).json({"message": "Invalid parameters.", "errors": err});
+            res.status(400).json({"message": "Invalid parameters.", "errors": err});
         }
     };
 
@@ -31,7 +31,7 @@ export class LeagueController {
 
             res.status(200).json({league: league});
         } catch (err) {
-            res.status(401).json({"message": "Invalid parameters.", "errors": err});
+            res.status(400).json({"message": "Invalid parameters.", "errors": err});
         }
     };
 
@@ -43,12 +43,12 @@ export class LeagueController {
 
             let league: ILeague = await League.findOne({code: req.body.code});
             if (!league) {
-                throw "League not found.";
+                return res.status(400).json({"message": "League not found."});
             }
 
             let userLeague: IUserLeague = await UserLeague.findOne({user_id: req.body.user.id, league_id: league.id});
             if (userLeague) {
-                throw "Already a member.";
+                return res.status(400).json({"message": "Already a member."});
             }
 
             // Add user to league.
@@ -59,9 +59,9 @@ export class LeagueController {
                 league_xp: 0
             }).save();
 
-            res.status(200).json({"message": `You have joined ${league.name}.`});
+            return res.status(200).json({"message": `You have joined ${league.name}.`});
         } catch (err) {
-            res.status(401).json({"message": "Error joining league.", "errors": err});
+            return res.status(400).json({"message": "Error joining league.", "errors": err});
         }
     };
 
@@ -73,12 +73,12 @@ export class LeagueController {
 
             let league: ILeague = await League.findOne({code: req.body.code});
             if (!league) {
-                throw "League not found.";
+                res.status(400).json({"message": "League not found."});
             }
 
             res.status(200).json({"message": `You have left ${league.name}.`});
         } catch (err) {
-            res.status(401).json({"message": "Error leaving league.", "errors": err});
+            res.status(400).json({"message": "Error leaving league.", "errors": err});
         }
     };
 }

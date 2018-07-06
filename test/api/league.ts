@@ -58,12 +58,10 @@ describe("# League", () => {
             description: "a very nice league",
         };
 
-        // Login.
-        let token: string = await login();
-
         let res = await request.post(process.env.API_BASE + "league")
-            .set('Authorization', 'Bearer ' + token)
             .send(testCreateLeague).expect(401);
+
+        expect(res.body.message).to.equal("Authorization is required.");
     });
 
     it("should view a league", async () => {
@@ -96,6 +94,8 @@ describe("# League", () => {
     it("should fail authentication trying to join a league", async () => {
         let res = await request.post(process.env.API_BASE + "join")
             .send({code: "abc123"}).expect(401);
+
+        expect(res.body.message).to.equal("Authorization is required.");
     });
 
     it("should join a league", async () => {

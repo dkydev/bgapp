@@ -40,5 +40,5 @@ export function router(app: express.Application): void {
 
     app.post(process.env.API_BASE + "register", UserController.register);
 
-    app.get(process.env.API_BASE + "user", Auth.authenticate(), UserController.view);
+    app.get(process.env.API_BASE + "user", Auth.authenticate, UserController.view);
 };

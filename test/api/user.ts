@@ -26,7 +26,9 @@ describe("# User", () => {
         const noData = {};
 
         // Register.
-        let res = await request.post(process.env.API_BASE + "register").send(noData).expect(401);
+        let res = await request.post(process.env.API_BASE + "register").send(noData).expect(400);
+
+        expect(res.body.message).to.equal("Invalid parameters.");
     });
 
     it("should view a user", async () => {

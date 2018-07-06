@@ -10,14 +10,19 @@ class Auth {
         return passport.initialize();
     };
 
-    public authenticate = () => {
+    public authenticate = async (req, res, next) => {
+        return await passport.authenticate('jwt', function (err, user, info) {
+            if (err || !user) return res.status(401).json({message: "Authorization is required."});
+            return next();
+        })(req, res, next);
 
-        return passport.authenticate("jwt", {session: false, failWithError: true});
-
-        //let user:IUser = await passport.authenticate(req, res);
-
-        //if (!user)
-          //  throw {message: "Your token has expired. Please generate a new one"};
+        /*
+        await passport.authenticate("jwt", function (err, user, info) {
+            if (err)
+            if (!user)
+            req.body.user = user;
+        })(req, res, next);
+        */
     }
 
     public genToken = (user: IUser): Object => {
