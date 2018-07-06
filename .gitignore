@@ -4,6 +4,7 @@ node_modules
 .cfignore
 .idea
 yarn-error.log
+.nyc_output
 server/**/*.js
 server/**/*.js.map
 test/**/*.js
