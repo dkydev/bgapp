@@ -73,8 +73,15 @@ export class LeagueController {
 
             let league: ILeague = await League.findOne({code: req.body.code});
             if (!league) {
-                res.status(400).json({"message": "League not found."});
+                return res.status(400).json({"message": "League not found."});
             }
+
+            let userLeague: IUserLeague = await UserLeague.findOne({user_id: req.body.user.id, league_id: league.id});
+            if (!userLeague) {
+                return res.status(400).json({"message": "Not a member."});
+            }
+
+            await userLeague.remove();
 
             res.status(200).json({"message": `You have left ${league.name}.`});
         } catch (err) {

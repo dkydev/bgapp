@@ -18,9 +18,6 @@ describe("# League", () => {
             description: "a very nice league",
         };
 
-        // Delete league/user if re-test.
-        await User.deleteOne({username: testUser.username});
-
         // Login.
         let token: string = await login();
 
@@ -49,6 +46,19 @@ describe("# League", () => {
         expect((userView.user_leagues[0].league_id as ILeague).name).to.equal(testCreateLeague.name);
         expect((userView.user_leagues[0].league_id as ILeague).description).to.equal(testCreateLeague.description);
 
+    });
+
+    it("should fail to create a league", async () => {
+        // Login.
+        let token: string = await login();
+
+        // Insert league.
+        let res = await request.post(process.env.API_BASE + "league")
+            .set('Authorization', 'Bearer ' + token)
+            .send({}).expect(400);
+
+        expect(res.body.message).to.equal(`Invalid parameters.`);
+        expect(res.body.errors).to.have.lengthOf(2);
     });
 
     it("should fail authentication trying to create a league", async () => {
@@ -91,6 +101,18 @@ describe("# League", () => {
         expect(viewResult.body.league).to.not.be.empty;
     });
 
+    it("should fail to view a league", async () => {
+        // Login.
+        let token: string = await login();
+
+        // Insert league.
+        let res = await request.get(process.env.API_BASE + "league")
+            .set('Authorization', 'Bearer ' + token)
+            .expect(400);
+
+        expect(res.body.message).to.equal(`Invalid parameters.`);
+    });
+
     it("should fail authentication trying to join a league", async () => {
         let res = await request.post(process.env.API_BASE + "join")
             .send({code: "abc123"}).expect(401);
@@ -122,6 +144,121 @@ describe("# League", () => {
             .send({code: league.code}).expect(200);
 
         expect(res.body.message).to.equals(`You have joined ${league.name}.`);
+    });
+
+    it("should fail to join a league", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "join")
+            .set('Authorization', 'Bearer ' + token)
+            .expect(400);
+
+        expect(res.body.message).to.equals(`Error joining league.`);
+    });
+
+    it("should fail to join a league that doesn't exist", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "join")
+            .set('Authorization', 'Bearer ' + token)
+            .send({code: "notacode"}).expect(400);
+
+        expect(res.body.message).to.equals(`League not found.`);
+    });
+
+    it("should fail to join a league already a member", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        let league: ILeague = await createLeague((await getTestUser()).id, {
+            "name": "test league",
+            "description": "test description"
+        });
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "join")
+            .set('Authorization', 'Bearer ' + token)
+            .send({code: league.code}).expect(400);
+
+        expect(res.body.message).to.equals(`Already a member.`);
+    });
+
+    it("should leave a league", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Create league.
+        let league:ILeague = await createLeague((await getTestUser()).id, {
+            name: "Test League for Leaving",
+            description: "Leave Me!!!!",
+        });
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "leave")
+            .set('Authorization', 'Bearer ' + token)
+            .send({code: league.code}).expect(200);
+
+        expect(res.body.message).to.equals(`You have left ${league.name}.`);
+    });
+
+    it("should fail to leave a league", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "leave")
+            .set('Authorization', 'Bearer ' + token)
+            .expect(400);
+
+        expect(res.body.message).to.equals(`Error leaving league.`);
+    });
+
+    it("should fail to leave a league that doesn't exist", async () => {
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "leave")
+            .set('Authorization', 'Bearer ' + token)
+            .send({code: "notacode"}).expect(400);
+
+        expect(res.body.message).to.equals(`League not found.`);
+    });
+
+    it("should fail to leave a league not a member", async () => {
+
+        // Create a league with a different user (not the default test user).
+        const testLeagueAdmin = {"username": "testLeagueAdminLeave", "password": "123456abcdef"};
+        let user: IUser = await createUser(testLeagueAdmin);
+        const testLeague = {
+            name: "Not a Member League",
+            description: "Leave Me!!!!",
+        };
+        let league: ILeague = await createLeague(user.id, testLeague);
+
+        //
+        //
+        //
+
+        // Login with test user.
+        let token: string = await login();
+
+        // Join league.
+        let res = await request.post(process.env.API_BASE + "leave")
+            .set('Authorization', 'Bearer ' + token)
+            .send({code: league.code}).expect(400);
+
+        expect(res.body.message).to.equals(`Not a member.`);
     });
 
 
