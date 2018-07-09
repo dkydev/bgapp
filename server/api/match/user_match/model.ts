@@ -1,8 +1,9 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {model as User, IUser} from "../../user/model";
+import {DocumentTimestamps} from "../../../common/db";
 
-export interface IUserMatch extends Document {
+export interface IUserMatch extends Document, DocumentTimestamps {
     user_id: IUser | string,
     score: number,
 }
@@ -26,5 +27,5 @@ export const userMatchSchema: Schema = new Schema({
 
 }, {timestamps: true});
 
-export const model: IUserMatchModel = Mongoose.model<IUserMatch, IUserMatchModel>('user_league', userMatchSchema);
+export const model: IUserMatchModel = Mongoose.model<IUserMatch, IUserMatchModel>('user_match', userMatchSchema);
 export const schema = model.schema;

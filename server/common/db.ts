@@ -33,3 +33,8 @@ export function dbClose(): Promise<void> {
         })
     });
 }
+
+export interface DocumentTimestamps {
+    createdAt: Date,
+    updatedAt: Date
+}

@@ -6,7 +6,6 @@ export class LeagueController {
     public create = async (req, res) => {
         try {
             req.checkBody("name", "Name required.").notEmpty();
-            req.checkBody("description", "Description required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
@@ -15,7 +14,7 @@ export class LeagueController {
                 "description": req.body.description
             });
 
-            res.status(200).json({"message": `Created league ${league.name}.`});
+            res.status(200).json({"message": `Created league ${league.name}.`, league_id: league.id, code : league.code});
         } catch (err) {
             res.status(400).json({"message": "Invalid parameters.", "errors": err});
         }
@@ -23,11 +22,11 @@ export class LeagueController {
 
     public view = async (req, res) => {
         try {
-            req.checkParams("code", "League code is required.").notEmpty();
+            req.checkParams("league_id", "League ID is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.params.code});
+            let league: ILeague = await League.findOne({_id: req.params.league_id});
 
             res.status(200).json({league: league});
         } catch (err) {
@@ -37,11 +36,11 @@ export class LeagueController {
 
     public update = async (req, res) => {
         try {
-            req.checkParams("code", "League code is required.").notEmpty();
+            req.checkParams("league_id", "League ID is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.params.code});
+            let league: ILeague = await League.findOne({_id: req.params.league_id});
             if (!league) {
                 return res.status(400).json({"message": "League not found."});
             }
@@ -91,11 +90,11 @@ export class LeagueController {
 
     public leave = async (req, res) => {
         try {
-            req.checkParams("code", "League code is required.").notEmpty();
+            req.checkParams("league_id", "League ID is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.params.code});
+            let league: ILeague = await League.findOne({_id: req.params.league_id});
             if (!league) {
                 return res.status(400).json({"message": "League not found."});
             }

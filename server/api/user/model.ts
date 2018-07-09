@@ -3,8 +3,9 @@ import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {IUserLeague, model as UserLeague} from "../league/user_league/model";
 import {testUser} from "../../../test/common";
+import {DocumentTimestamps} from "../../common/db";
 
-export interface IUser extends Document {
+export interface IUser extends Document, DocumentTimestamps {
     username: string;
     email: string,
     password: string,
@@ -99,7 +100,7 @@ userSchema.methods.comparePassword = async function (candidatePassword: string):
     });
 };
 
-export const createUser = async (data:any): Promise<IUser> => {
+export const createUser = async (data: any): Promise<IUser> => {
     return await new model(data).save();
 };
 

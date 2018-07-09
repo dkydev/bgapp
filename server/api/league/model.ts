@@ -2,12 +2,13 @@ import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
 import {IUserLeague, model as UserLeague} from "./user_league/model";
 import * as shortid from 'shortid';
+import {DocumentTimestamps} from "../../common/db";
 
 // TODO: ShortID retries if fail.
 
-export interface ILeague extends Document {
+export interface ILeague extends Document, DocumentTimestamps {
     name: string;
-    description: string,
+    description?: string,
     code: string,
     user_leagues: IUserLeague[]
 }

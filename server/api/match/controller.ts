@@ -14,7 +14,7 @@ export class MatchController {
                 "league_id": req.body.league_id
             });
 
-            res.status(200).json({"message": `Created match playing ${match.name}.`});
+            res.status(200).json({"message": `Created match playing ${match.name}.`, "match_id" : match.id});
         } catch (err) {
             res.status(400).json({"message": "Invalid parameters.", "errors": err});
         }
@@ -26,7 +26,7 @@ export class MatchController {
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let match: IMatch = await Match.findOne({_id: req.params.match_id}).populate("user_match");
+            let match: IMatch = await Match.findOne({_id: req.params.match_id});
             if (!match) {
                 return res.status(400).json({"message": "Match not found."});
             }

@@ -1,12 +1,14 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {IUserMatch} from "./user_match/model";
+import {model as UserMatch, IUserMatch, userMatchSchema} from "./user_match/model";
+import {DocumentTimestamps} from "../../common/db"
 
-export interface IMatch extends Document {
+export interface IMatch extends Document, DocumentTimestamps {
+    league_id: String,
     name: String,
-    game_api_reference : String,
+    game_api_reference: String,
     user_match: IUserMatch | String,
-    completed : boolean
+    completed: boolean
 }
 
 export interface IMatchModel extends Model<IMatch> {
@@ -16,7 +18,7 @@ export interface IMatchModel extends Model<IMatch> {
 
 export const matchSchema: Schema = new Schema({
 
-    league_id : {
+    league_id: {
         type: Schema.Types.ObjectId,
         ref: 'league',
         required: true
@@ -34,10 +36,9 @@ export const matchSchema: Schema = new Schema({
         type: String
     },
 
-    user_match: {
-        type: Mongoose.Schema.Types.ObjectId,
-        ref: "user_match"
-    },
+    user_match: [
+        userMatchSchema
+    ],
 
     completed: {
         type: Mongoose.Schema.Types.Boolean,
@@ -46,5 +47,5 @@ export const matchSchema: Schema = new Schema({
 
 }, {timestamps: true});
 
-export const model: IMatchModel = Mongoose.model<IMatch, IMatchModel>('league', matchSchema);
+export const model: IMatchModel = Mongoose.model<IMatch, IMatchModel>('match', matchSchema);
 export const schema = model.schema;

@@ -27,6 +27,10 @@ describe("# League", () => {
             .send(testCreateLeague).expect(200);
 
         expect(res.body.message).to.equal(`Created league ${testCreateLeague.name}.`);
+        expect(res.body.league_id).to.not.be.empty;
+        expect(res.body.league_id).to.be.a("String");
+        expect(res.body.code).to.not.be.empty;
+        expect(res.body.code).to.be.a("String");
 
         // Expect league has user as only user and is admin.
 
@@ -39,6 +43,8 @@ describe("# League", () => {
         expect(league.code).to.not.be.empty;
         expect(league.user_leagues).to.have.lengthOf(1);
         expect(league.user_leagues[0].user_id.toString()).to.equal(user.id);
+        expect(league.createdAt).to.be.a("Date");
+        expect(league.updatedAt).to.be.a("Date");
 
         // Get user 'view' and expect user_leagues to populate dynamically.
         let userView: IUserView = await User.view(user.id);
@@ -58,7 +64,7 @@ describe("# League", () => {
             .send({}).expect(400);
 
         expect(res.body.message).to.equal(`Invalid parameters.`);
-        expect(res.body.errors).to.have.lengthOf(2);
+        expect(res.body.errors).to.have.lengthOf(1);
     });
 
     it("should fail authentication trying to create a league", async () => {
@@ -94,7 +100,7 @@ describe("# League", () => {
         let league: ILeague = await League.findOne({name: testCreateLeague.name});
 
         // Insert league.
-        let viewResult = await request.get(process.env.API_BASE + `leagues/${league.code}`)
+        let viewResult = await request.get(process.env.API_BASE + `leagues/${league.id}`)
             .set('Authorization', 'Bearer ' + token)
             .expect(200);
 
@@ -105,7 +111,7 @@ describe("# League", () => {
         // Login.
         let token: string = await login();
 
-        // Insert league.
+        // Attempt to view league.
         let res = await request.get(process.env.API_BASE + "leagues")
             .set('Authorization', 'Bearer ' + token)
             .expect(404);
@@ -189,7 +195,7 @@ describe("# League", () => {
         });
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/leave`)
+        let res = await request.post(process.env.API_BASE + `leagues/${league.id}/leave`)
             .set('Authorization', 'Bearer ' + token)
             .expect(200);
 
@@ -206,7 +212,7 @@ describe("# League", () => {
             .set('Authorization', 'Bearer ' + token)
             .expect(400);
 
-        expect(res.body.message).to.equals(`League not found.`);
+        expect(res.body.message).to.equals(`Error leaving league.`);
     });
 
     it("should fail to leave a league that doesn't exist", async () => {
@@ -214,8 +220,11 @@ describe("# League", () => {
         // Login with test user.
         let token: string = await login();
 
+        // Use a user ID as a valid ObjectId that will not be found.
+        let invalid_id = (await getTestUser()).id;
+
         // Join league.
-        let res = await request.post(process.env.API_BASE + `leagues/notaleague/leave`)
+        let res = await request.post(process.env.API_BASE + `leagues/${invalid_id}/leave`)
             .set('Authorization', 'Bearer ' + token)
             .expect(400);
 
@@ -241,7 +250,7 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/leave`)
+        let res = await request.post(process.env.API_BASE + `leagues/${league.id}/leave`)
             .set('Authorization', 'Bearer ' + token)
             .expect(400);
 
