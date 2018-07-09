@@ -48,14 +48,14 @@ export class UserController {
 
     public view = async (req, res) => {
         try {
-            req.checkBody("user_id", "Invalid user ID").notEmpty();
+            req.checkParams("user_id", "Invalid user ID").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
             let user:IUserView;
 
             try {
-                user = await User.view(req.body.user_id);
+                user = await User.view(req.params.user_id);
             } catch (err) {
                 return res.status(400).json({"message": "User not found."});
             }

@@ -1,8 +1,8 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {model as User, IUser} from "../user/model";
-import {model as League, ILeague} from "../league/model";
-import {model as UserLeague} from "../userleague/model";
+import {model as User, IUser} from "../../user/model";
+import {model as League, ILeague} from "../model";
+import {model as UserLeague} from "./model";
 
 export interface IUserLeague extends Document {
     user_id: IUser | string,
@@ -18,7 +18,7 @@ export interface IUserLeagueModel extends Model<IUserLeague> {
 export const userLeagueSchema: Schema = new Schema({
 
     is_admin: {
-        type: Boolean,
+        type: Schema.Types.Boolean,
         default: false
     },
 
@@ -35,7 +35,7 @@ export const userLeagueSchema: Schema = new Schema({
     },
 
     league_xp: {
-        type: Number,
+        type: Schema.Types.Number,
         min: 0,
         max: Number.MAX_SAFE_INTEGER
     }

@@ -1,7 +1,7 @@
 import {request, login, testUser, getTestUser} from "../common";
 import {expect} from "chai";
 import {model as League, ILeague, createLeague} from "../../server/api/league/model";
-import {model as UserLeague, IUserLeague} from "../../server/api/userleague/model";
+import {model as UserLeague, IUserLeague} from "../../server/api/league/user_league/model";
 import {model as User, IUser, IUserView, createUser} from "../../server/api/user/model";
 
 before(async () => {
@@ -22,7 +22,7 @@ describe("# League", () => {
         let token: string = await login();
 
         // Insert league.
-        let res = await request.post(process.env.API_BASE + "league")
+        let res = await request.post(process.env.API_BASE + "leagues")
             .set('Authorization', 'Bearer ' + token)
             .send(testCreateLeague).expect(200);
 
@@ -53,7 +53,7 @@ describe("# League", () => {
         let token: string = await login();
 
         // Insert league.
-        let res = await request.post(process.env.API_BASE + "league")
+        let res = await request.post(process.env.API_BASE + "leagues")
             .set('Authorization', 'Bearer ' + token)
             .send({}).expect(400);
 
@@ -68,7 +68,7 @@ describe("# League", () => {
             description: "a very nice league",
         };
 
-        let res = await request.post(process.env.API_BASE + "league")
+        let res = await request.post(process.env.API_BASE + "leagues")
             .send(testCreateLeague).expect(401);
 
         expect(res.body.message).to.equal("Authorization is required.");
@@ -85,7 +85,7 @@ describe("# League", () => {
         let token: string = await login();
 
         // Insert league.
-        let res = await request.post(process.env.API_BASE + "league")
+        let res = await request.post(process.env.API_BASE + "leagues")
             .set('Authorization', 'Bearer ' + token)
             .send(testCreateLeague).expect(200);
 
@@ -94,9 +94,9 @@ describe("# League", () => {
         let league: ILeague = await League.findOne({name: testCreateLeague.name});
 
         // Insert league.
-        let viewResult = await request.get(process.env.API_BASE + "league")
+        let viewResult = await request.get(process.env.API_BASE + `leagues/${league.code}`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: league.code}).expect(200);
+            .expect(200);
 
         expect(viewResult.body.league).to.not.be.empty;
     });
@@ -106,16 +106,16 @@ describe("# League", () => {
         let token: string = await login();
 
         // Insert league.
-        let res = await request.get(process.env.API_BASE + "league")
+        let res = await request.get(process.env.API_BASE + "leagues")
             .set('Authorization', 'Bearer ' + token)
-            .expect(400);
+            .expect(404);
 
-        expect(res.body.message).to.equal(`Invalid parameters.`);
+        //expect(res.body.message).to.equal(`Invalid parameters.`);
     });
 
     it("should fail authentication trying to join a league", async () => {
-        let res = await request.post(process.env.API_BASE + "join")
-            .send({code: "abc123"}).expect(401);
+        let res = await request.post(process.env.API_BASE + "leagues/abc123/join")
+            .expect(401);
 
         expect(res.body.message).to.equal("Authorization is required.");
     });
@@ -139,24 +139,11 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "join")
+        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/join`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: league.code}).expect(200);
+            .expect(200);
 
         expect(res.body.message).to.equals(`You have joined ${league.name}.`);
-    });
-
-    it("should fail to join a league", async () => {
-
-        // Login with test user.
-        let token: string = await login();
-
-        // Join league.
-        let res = await request.post(process.env.API_BASE + "join")
-            .set('Authorization', 'Bearer ' + token)
-            .expect(400);
-
-        expect(res.body.message).to.equals(`Error joining league.`);
     });
 
     it("should fail to join a league that doesn't exist", async () => {
@@ -165,9 +152,9 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "join")
+        let res = await request.post(process.env.API_BASE + "leagues/notaleague/join")
             .set('Authorization', 'Bearer ' + token)
-            .send({code: "notacode"}).expect(400);
+            .expect(400);
 
         expect(res.body.message).to.equals(`League not found.`);
     });
@@ -183,9 +170,9 @@ describe("# League", () => {
         });
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "join")
+        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/join`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: league.code}).expect(400);
+            .expect(400);
 
         expect(res.body.message).to.equals(`Already a member.`);
     });
@@ -202,9 +189,9 @@ describe("# League", () => {
         });
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "leave")
+        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/leave`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: league.code}).expect(200);
+            .expect(200);
 
         expect(res.body.message).to.equals(`You have left ${league.name}.`);
     });
@@ -215,11 +202,11 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "leave")
+        let res = await request.post(process.env.API_BASE + `leagues/notaleague/leave`)
             .set('Authorization', 'Bearer ' + token)
             .expect(400);
 
-        expect(res.body.message).to.equals(`Error leaving league.`);
+        expect(res.body.message).to.equals(`League not found.`);
     });
 
     it("should fail to leave a league that doesn't exist", async () => {
@@ -228,9 +215,9 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "leave")
+        let res = await request.post(process.env.API_BASE + `leagues/notaleague/leave`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: "notacode"}).expect(400);
+            .expect(400);
 
         expect(res.body.message).to.equals(`League not found.`);
     });
@@ -254,9 +241,9 @@ describe("# League", () => {
         let token: string = await login();
 
         // Join league.
-        let res = await request.post(process.env.API_BASE + "leave")
+        let res = await request.post(process.env.API_BASE + `leagues/${league.code}/leave`)
             .set('Authorization', 'Bearer ' + token)
-            .send({code: league.code}).expect(400);
+            .expect(400);
 
         expect(res.body.message).to.equals(`Not a member.`);
     });

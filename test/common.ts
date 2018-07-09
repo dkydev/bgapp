@@ -48,7 +48,7 @@ export const getTestUser = async (): Promise<IUser> => {
 export const login = async (): Promise<any> => {
     let user: IUser = await getTestUser();
     let result = await request
-        .post(process.env.API_BASE + "login")
+        .post(process.env.API_BASE + "users/login")
         .send({"username": user.username, "password": testUser.password})
         .expect(200);
     return result.body.token;

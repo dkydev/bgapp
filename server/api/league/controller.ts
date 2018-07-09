@@ -1,5 +1,5 @@
 import {model as League, ILeague, createLeague} from './model';
-import {IUserLeague, model as UserLeague} from '../userleague/model';
+import {IUserLeague, model as UserLeague} from './user_league/model';
 
 export class LeagueController {
 
@@ -23,11 +23,11 @@ export class LeagueController {
 
     public view = async (req, res) => {
         try {
-            req.checkBody("code", "League code is required.").notEmpty();
+            req.checkParams("code", "League code is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.body.code});
+            let league: ILeague = await League.findOne({code: req.params.code});
 
             res.status(200).json({league: league});
         } catch (err) {
@@ -35,13 +35,37 @@ export class LeagueController {
         }
     };
 
-    public join = async (req, res) => {
+    public update = async (req, res) => {
         try {
-            req.checkBody("code", "League code is required.").notEmpty();
+            req.checkParams("code", "League code is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.body.code});
+            let league: ILeague = await League.findOne({code: req.params.code});
+            if (!league) {
+                return res.status(400).json({"message": "League not found."});
+            }
+
+            league.name = req.body.name ? req.body.name : league.name;
+            league.description = req.body.description ? req.body.description : league.description;
+
+            if (req.body.name || req.body.description) {
+                await league.save();
+            }
+
+            return res.status(200).json({"message": `League updated.`});
+        } catch (err) {
+            return res.status(400).json({"message": "Error updating league.", "errors": err});
+        }
+    };
+
+    public join = async (req, res) => {
+        try {
+            req.checkParams("code", "League code is required.").notEmpty();
+            let errors = req.validationErrors();
+            if (errors) throw errors;
+
+            let league: ILeague = await League.findOne({code: req.params.code});
             if (!league) {
                 return res.status(400).json({"message": "League not found."});
             }
@@ -67,11 +91,11 @@ export class LeagueController {
 
     public leave = async (req, res) => {
         try {
-            req.checkBody("code", "League code is required.").notEmpty();
+            req.checkParams("code", "League code is required.").notEmpty();
             let errors = req.validationErrors();
             if (errors) throw errors;
 
-            let league: ILeague = await League.findOne({code: req.body.code});
+            let league: ILeague = await League.findOne({code: req.params.code});
             if (!league) {
                 return res.status(400).json({"message": "League not found."});
             }

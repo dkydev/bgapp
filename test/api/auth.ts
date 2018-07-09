@@ -19,7 +19,7 @@ describe("# Auth", () => {
         await getTestUser();
 
         // Login with bad password.
-        let res = await request.post(process.env.API_BASE + "login")
+        let res = await request.post(process.env.API_BASE + "users/login")
             .send({"username": testUser.username, "password": "anythingGoesHere"})
             .expect(400);
 
@@ -30,14 +30,14 @@ describe("# Auth", () => {
 
         let res;
         // Wrong password.
-        res = await request.post(process.env.API_BASE + "login")
+        res = await request.post(process.env.API_BASE + "users/login")
             .send({"username": testUser.username, "password": ""})
             .expect(400);
 
         expect(res.body.message).to.equal("Invalid credentials.");
 
         // Wrong user.
-        res = await request.post(process.env.API_BASE + "login")
+        res = await request.post(process.env.API_BASE + "users/login")
             .send({"username": "anotherusername", "password": testUser.password})
             .expect(400);
 
@@ -45,7 +45,7 @@ describe("# Auth", () => {
     });
 
     it("should fail to view user invalid token", async () => {
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + "users/notauser")
             .set('Authorization', 'Bearer awdawdawd')
             .expect(401);
 
@@ -53,7 +53,7 @@ describe("# Auth", () => {
     });
 
     it("should fail to view user no token", async () => {
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + "users/notauser")
             .expect(401);
 
         expect(res.body.message).to.equal("Authorization is required.");
@@ -61,17 +61,23 @@ describe("# Auth", () => {
 
     it("should authenticate and return user", async () => {
         let token: string = await login();
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + `users/${(await getTestUser()).id}`)
             .set('Authorization', 'Bearer ' + token)
-            .send({user_id: (await getTestUser()).id})
             .expect(200);
 
         expect(res.body.user).to.not.be.empty;
     });
 
-    it("should 404 cannot post to user", async () => {
+    it("should 404 cannot post to users", async () => {
         let token: string = await login();
-        await request.post(process.env.API_BASE + "user")
+        await request.post(process.env.API_BASE + "users/")
+            .set('Authorization', 'Bearer ' + token)
+            .expect(404);
+    });
+
+    it("should 404 cannot post to users with id", async () => {
+        let token: string = await login();
+        await request.post(process.env.API_BASE + "users/notauser")
             .set('Authorization', 'Bearer ' + token)
             .expect(404);
     });

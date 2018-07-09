@@ -16,7 +16,7 @@ describe("# User", () => {
         await User.remove({});
 
         // Register.
-        let res = await request.post(process.env.API_BASE + "register").send(testRegisterUser).expect(200);
+        let res = await request.post(process.env.API_BASE + "users/register").send(testRegisterUser).expect(200);
 
         expect(res.body).to.not.be.empty;
     });
@@ -26,16 +26,15 @@ describe("# User", () => {
         const noData = {};
 
         // Register.
-        let res = await request.post(process.env.API_BASE + "register").send(noData).expect(400);
+        let res = await request.post(process.env.API_BASE + "users/register").send(noData).expect(400);
 
         expect(res.body.message).to.equal("Invalid parameters.");
     });
 
     it("should view a user", async () => {
         let token: string = await login();
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + `users/${(await getTestUser()).id}`)
             .set('Authorization', 'Bearer ' + token)
-            .send({user_id: (await getTestUser()).id})
             .expect(200);
 
         // Should have a user object.
@@ -53,23 +52,19 @@ describe("# User", () => {
 
     it("should not find a user to view", async () => {
         let token: string = await login();
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + "users/notauserid")
             .set('Authorization', 'Bearer ' + token)
-            .send({user_id: "notauserid"})
             .expect(400);
 
         // Should have a user object.
         expect(res.body.message).to.equal("User not found.");
     });
 
-    it("should not validate trying to view a user", async () => {
+    it("should not get users", async () => {
         let token: string = await login();
-        let res = await request.get(process.env.API_BASE + "user")
+        let res = await request.get(process.env.API_BASE + "users/")
             .set('Authorization', 'Bearer ' + token)
-            .expect(400);
-
-        // Should have a user object.
-        expect(res.body.message).to.equal("Invalid parameters.");
+            .expect(404);
     });
 
 });

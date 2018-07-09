@@ -1,7 +1,9 @@
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {IUserLeague, model as UserLeague} from "../userleague/model";
+import {IUserLeague, model as UserLeague} from "./user_league/model";
 import * as shortid from 'shortid';
+
+// TODO: ShortID retries if fail.
 
 export interface ILeague extends Document {
     name: string;

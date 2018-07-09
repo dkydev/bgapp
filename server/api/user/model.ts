@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcryptjs';
 import * as Mongoose from 'mongoose';
 import {Document, Schema, Model} from "mongoose";
-import {IUserLeague, model as UserLeague} from "../userleague/model";
+import {IUserLeague, model as UserLeague} from "../league/user_league/model";
 import {testUser} from "../../../test/common";
 
 export interface IUser extends Document {
@@ -57,7 +57,7 @@ export const userSchema: Schema = new Schema({
     },
 
     total_xp: {
-        type: Number,
+        type: Schema.Types.Number,
         min: 0,
         max: Number.MAX_SAFE_INTEGER
     }
